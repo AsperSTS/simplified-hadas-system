@@ -9,10 +9,10 @@ class LaneDetector:
         self.right_fits = deque(maxlen=smoothing_frames)
         self.frame_count = 0
         self.smoothing_frames = smoothing_frames
-        self.last_left_fit = np.array([0,-1.5, 1204.8]) 
-        self.last_right_fit = np.array([0, 1.2,262.6])
+        self.last_left_fit = np.array([0, -1.5, 1204.8]) 
+        self.last_right_fit = np.array([0, 1.5, 262.6])
         self.coef_ranges = {
-            'a': (-0.001, 0.001),  # Más margen para curvatura
+            'a': (-0.002, 0.002),  # Más margen para curvatura
             'b': (-2.0, 2.0),      # Más margen para pendiente
             'c': (-1000, 1000)     # Aunque 'c' no se usa, mejor darle un rango válido
         }
@@ -26,16 +26,17 @@ class LaneDetector:
         # Procesar frame solo cada N frames o si es el primero
         if self.frame_count % self.smoothing_frames == 1 or self.last_left_fit is None:
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            blur = cv2.GaussianBlur(gray, (5, 5), 0)
+            blur = cv2.GaussianBlur(gray, (3, 3), 0)
             edges = auto_canny(blur)
             
             # Región de interés trapezoidal
-            roi_vertices = np.array([
-                [(height//7, height), 
-                 (width//3+(height//7), height//2), 
-                 (2*width//3-(height//7), height//2), 
-                 (width-(height//7), height)]
-            ], dtype=np.int32)
+            roi_vertices = np.array([[
+                (width * 0.12, height),
+                (width * 0.42, height * 0.58),
+                (width * 0.58, height * 0.58),
+                (width * 0.88, height)
+            ]], dtype=np.int32)
+
             
             masked_edges = region_of_interest(edges, roi_vertices)
             
@@ -93,13 +94,14 @@ class LaneDetector:
         
         self._draw_lanes(result)
         
-        # Dibujar ROI
-        roi_vertices = np.array([
-            [(height//7, height), 
-             (width//3+(height//7), height//2), 
-             (2*width//3-(height//7), height//2), 
-             (width-(height//7), height)]
-        ], dtype=np.int32)
+        # Dibujar ROI - Region of interest
+        roi_vertices = np.array([[
+            (width * 0.12, height),
+            (width * 0.42, height * 0.58),
+            (width * 0.58, height * 0.58),
+            (width * 0.88, height)
+        ]], dtype=np.int32)
+
         cv2.polylines(result, [roi_vertices], isClosed=True, color=(0, 120, 255), thickness=2)
         
         draw_text(result, "Deteccion de carriles", (width - 220, 70))
@@ -186,17 +188,18 @@ class LaneDetector:
         # Dibujar curvas
         if left_fit is not None:
             self._draw_poly_line(image, left_fit, height, (0, 255, 0), 3)
-            print(f"Left: {left_fit}")
+            # print(f"Left: {left_fit}")
         
         if right_fit is not None:
             self._draw_poly_line(image, right_fit, height, (0, 255, 0), 3)
-            print(f"Right: {right_fit}")
+            # print(f"Right: {right_fit}")
     
     def _draw_poly_line(self, img, fit, height, color, thickness, start_percent=0.65):
         """Dibuja una línea polinómica más corta"""
         # Iniciar desde un punto más abajo (60% de la altura)
         start_height = int(height * start_percent)
-        ploty = np.linspace(start_height, height-1, 15)
+        ploty = np.linspace(start_height, height-1, 30)
+        # print(plo)
         plotx = fit[0]*ploty**2 + fit[1]*ploty + fit[2]
         
         # Convertir a puntos enteros

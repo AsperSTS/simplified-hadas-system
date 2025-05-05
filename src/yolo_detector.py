@@ -25,21 +25,12 @@ def obstacles_detector(model, frame, frame_count, width, height, last_detections
             'class_ids': [],
             'confidences': []
         }
-    
-    roi_vertices = np.array([
-                [(0, height),
-                 (0, height-(height//5)), 
-                 (width//3+(height//7), height//1.8), 
-                 (2*width//3-(height//7), height//1.8), 
-                 (width, height-(height//5)),
-                 (width, height)]
-            ], dtype=np.int32)
+
     
     # Procesar cada 3 frames
-    if frame_count % 3 == 0:
-        result_frame = frame.copy()
-        roi_frame = region_of_interest(result_frame, roi_vertices)
-        results = model(roi_frame)
+    if frame_count % 2 == 0:
+        # result_frame = frame.copy()
+        results = model(frame)
 
         # Limpiar las listas anteriores
         new_boxes = []
@@ -53,7 +44,7 @@ def obstacles_detector(model, frame, frame_count, width, height, last_detections
             
             # Guardar las detecciones actuales
             for i, box in enumerate(boxes):
-                if confidences[i] > 0.4:  # Umbral de confianza
+                if confidences[i] > 0.3:  # Umbral de confianza
                     new_boxes.append(box)
                     new_class_ids.append(class_ids[i])
                     new_confidences.append(confidences[i])
@@ -64,7 +55,7 @@ def obstacles_detector(model, frame, frame_count, width, height, last_detections
                     confidence = confidences[i]
                     label = f"{CLASS_NAMES[class_id]} {confidence:.2f}"
                     color = COLORS_PER_CLASS[class_id]
-                    cv2.rectangle(frame, (xmin, ymin), (xmax, ymax), color, 2)
+                    cv2.rectangle(frame, (xmin, ymin), (xmax, ymax), color, 1)
                     cv2.putText(frame, label, (xmin, ymin - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
         
         # Actualizar las detecciones guardadas
@@ -79,10 +70,8 @@ def obstacles_detector(model, frame, frame_count, width, height, last_detections
             confidence = last_detections['confidences'][i]
             label = f"{CLASS_NAMES[class_id]} {confidence:.2f}"
             color = COLORS_PER_CLASS[class_id]
-            cv2.rectangle(frame, (xmin, ymin), (xmax, ymax), color, 2)
+            cv2.rectangle(frame, (xmin, ymin), (xmax, ymax), color, 1)
             cv2.putText(frame, label, (xmin, ymin - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
-    
-    # Dibujar ROI
-    cv2.polylines(frame, [roi_vertices], isClosed=True, color=(255, 165, 0), thickness=2)
+
 
     return frame, last_detections

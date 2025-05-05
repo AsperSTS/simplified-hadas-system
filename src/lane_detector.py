@@ -29,14 +29,21 @@ class LaneDetector:
             blur = cv2.GaussianBlur(gray, (3, 3), 0)
             edges = auto_canny(blur)
             
-            # Región de interés trapezoidal
-            roi_vertices = np.array([[
-                (width * 0.12, height),
-                (width * 0.42, height * 0.58),
-                (width * 0.58, height * 0.58),
-                (width * 0.88, height)
-            ]], dtype=np.int32)
-
+            # # Región de interés trapezoidal
+            # roi_vertices = np.array([[
+            #     (width * 0.12, height),
+            #     (width * 0.42, height * 0.58),
+            #     (width * 0.58, height * 0.58),
+            #     (width * 0.88, height)
+            # ]], dtype=np.int32)
+            roi_vertices = np.array([
+                [(0, height),
+                 (0, height-(height//5)), 
+                 (width//3+(height//7), height//1.8), 
+                 (2*width//3-(height//7), height//1.8), 
+                 (width, height-(height//5)),
+                 (width, height)]
+            ], dtype=np.int32)
             
             masked_edges = region_of_interest(edges, roi_vertices)
             
@@ -95,16 +102,23 @@ class LaneDetector:
         self._draw_lanes(result)
         
         # Dibujar ROI - Region of interest
-        roi_vertices = np.array([[
-            (width * 0.12, height),
-            (width * 0.42, height * 0.58),
-            (width * 0.58, height * 0.58),
-            (width * 0.88, height)
-        ]], dtype=np.int32)
-
-        cv2.polylines(result, [roi_vertices], isClosed=True, color=(0, 120, 255), thickness=2)
+        # roi_vertices = np.array([[
+        #     (width * 0.12, height),
+        #     (width * 0.42, height * 0.58),
+        #     (width * 0.58, height * 0.58),
+        #     (width * 0.88, height)
+        # ]], dtype=np.int32)
+        roi_vertices = np.array([
+                [(0, height),
+                 (0, height-(height//5)), 
+                 (width//3+(height//7), height//1.8), 
+                 (2*width//3-(height//7), height//1.8), 
+                 (width, height-(height//5)),
+                 (width, height)]
+            ], dtype=np.int32)
+        cv2.polylines(result, [roi_vertices], isClosed=True, color=(0, 120, 255), thickness=1)
         
-        draw_text(result, "Deteccion de carriles", (width - 220, 70))
+        draw_text(result, "Deteccion de carriles", (width - 320, 25))
         
         return result
     
@@ -187,11 +201,11 @@ class LaneDetector:
         
         # Dibujar curvas
         if left_fit is not None:
-            self._draw_poly_line(image, left_fit, height, (0, 255, 0), 3)
+            self._draw_poly_line(image, left_fit, height, (0, 255, 0), 2)
             # print(f"Left: {left_fit}")
         
         if right_fit is not None:
-            self._draw_poly_line(image, right_fit, height, (0, 255, 0), 3)
+            self._draw_poly_line(image, right_fit, height, (0, 255, 0), 2)
             # print(f"Right: {right_fit}")
     
     def _draw_poly_line(self, img, fit, height, color, thickness, start_percent=0.65):

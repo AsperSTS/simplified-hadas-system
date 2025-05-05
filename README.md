@@ -13,7 +13,7 @@ Este codigo implementa un sistema ADAS (Sistema Avanzados de Asistencia al Condu
 
 1. Para utilizar un video guardado:
    ```bash 
-   python main.py --input [NombreVideo.mp4] --show
+   python main.py --input video1_720.mp4 --show
    ```
 
 ## Project description

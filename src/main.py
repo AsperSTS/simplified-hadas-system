@@ -7,6 +7,9 @@ from yolo_detector import obstacles_detector
 from utils import fps_counter, draw_text
 # import numpy as np
 from testcode import *
+from distance_estimator import add_distance_estimation
+
+from config import *
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Sistema de detección para conducción autónoma')
@@ -36,12 +39,7 @@ def process_video(input_source, output_path=None, show_video=True):
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     fps = cap.get(cv2.CAP_PROP_FPS)
     
-    # Configurar grabador de video si se especificó una salida
-    out = None
-    if output_path:
-        fourcc = cv2.VideoWriter_fourcc(*'XVID')
-        out = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
-    
+
     # Inicializar contador FPS
     fps_tracker = fps_counter()
     next(fps_tracker)  # Inicializar el generador
@@ -53,39 +51,43 @@ def process_video(input_source, output_path=None, show_video=True):
     
     try:
         while True:
+            start_time = time.time()
+
             ret, frame = cap.read()
             if not ret:
                 print("Fin del video o error en la captura.")
                 break
-        
-        
+
             frame = detect_lanes(frame)
-            # Aplicar el detector de obstáculos
+            
             result_frame, last_detections = obstacles_detector(
                 model, frame, frame_count, width, height, last_detections
-            )    
+            )
+
+            result_frame = add_distance_estimation(
+                frame, last_detections['boxes'], last_detections['class_ids']
+            )
+
             # Calcular y mostrar FPS
             current_fps = fps_tracker.send(time.time())
             draw_text(result_frame, f"FPS: {current_fps:.1f}", (10, 20))
-            
-            # Mostrar el resultado si se solicitó
+
             if show_video:
                 cv2.imshow('Video', result_frame)
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
-            
-            # Incrementar contador de frames
+
             frame_count += 1
-            
-            # Guardar el frame procesado si se especificó una salida
-            if out:
-                out.write(result_frame)
+
+            # Esperar si el procesamiento fue muy rápido
+            elapsed = time.time() - start_time
+            sleep_time = FRAME_INTERVAL - elapsed
+            if sleep_time > 0:
+                time.sleep(sleep_time)
+                
     finally:
         # Liberar recursos
         cap.release()
-        if out:
-            out.release()
-        cv2.destroyAllWindows()
 
 if __name__ == "__main__":
     args = parse_arguments()

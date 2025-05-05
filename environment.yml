@@ -1,0 +1,13 @@
+name: adas_yolo  # Puedes cambiar el nombre del entorno
+channels:
+  - conda-forge
+  - pytorch
+dependencies:
+  - python=3.x  # Especifica la versión de Python que necesitas (ej., 3.9, 3.10)
+  - pip
+  - opencv-python
+  - pytorch::pytorch  # Si YOLO requiere PyTorch
+  - pytorch::torchvision # Si YOLO requiere torchvision
+  - pytorch::torchaudio # Si YOLO requiere torchaudio (puede que no sea necesario)
+  - pip:
+    - ultralytics

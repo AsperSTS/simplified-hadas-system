@@ -2,13 +2,11 @@ import cv2
 import argparse
 import time
 from ultralytics import YOLO
+from utils import fps_counter, draw_text
+
 from lane_detector import detect_lanes
 from yolo_detector import obstacles_detector
-from utils import fps_counter, draw_text
-# import numpy as np
-from testcode import *
 from distance_estimator import add_distance_estimation
-
 from config import *
 
 def parse_arguments():

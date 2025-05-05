@@ -1,3 +1,17 @@
+## **Instalación de dependencias:** 
+
+Asegúrate de tener Python instalado en tu sistema. Luego, puedes instalar las dependencias usando pip:
+
+```bash
+pip install -r requirements.txt
+```
+
+O, si prefieres usar Conda:
+
+```bash
+conda env create -f environment.yml
+conda activate adas_yolo
+```
 
 ## Descripción del proyecto
 

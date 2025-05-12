@@ -2,9 +2,9 @@ import cv2
 import argparse
 import time
 from ultralytics import YOLO
-from utils import fps_counter, draw_text
+from utils import fps_counter, draw_text, record_safety_videos
 
-from lane_detector import detect_lanes
+from lane_detector import LaneDetector
 from yolo_detector import obstacles_detector
 from distance_estimator import add_distance_estimation
 from config import *
@@ -34,10 +34,9 @@ def process_video(input_source, output_path=None, show_video=True):
         return
     
     # Obtener propiedades del video
-    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-    fps = cap.get(cv2.CAP_PROP_FPS)
-    
+    # width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    # height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    # fps = cap.get(cv2.CAP_PROP_FPS)
 
     # Inicializar contador FPS
     fps_tracker = fps_counter()
@@ -48,6 +47,7 @@ def process_video(input_source, output_path=None, show_video=True):
     frame_count = 0
     last_detections = None  # Para almacenar detecciones entre frames
     
+    lane_detector = LaneDetector(smoothing_frames=4)
     try:
         while True:
             start_time = time.time()
@@ -56,21 +56,19 @@ def process_video(input_source, output_path=None, show_video=True):
             if not ret:
                 print("Fin del video o error en la captura.")
                 break
-
             
-            
-            frame = detect_lanes(frame)
+            result_frame = lane_detector.detect_lanes(frame)
             
             result_frame, last_detections = obstacles_detector(
-                model, frame, frame_count, width, height, last_detections
+                model, result_frame, frame_count, last_detections
             )
 
             result_frame = add_distance_estimation(
-                frame, last_detections['boxes'], last_detections['class_ids']
+                result_frame, last_detections['boxes'], last_detections['class_ids']
             )
 
             result_frame = process_stop_light(
-                frame, last_detections['boxes'], last_detections['class_ids']
+                result_frame, last_detections['boxes'], last_detections['class_ids']
             )
 
             # Calcular y mostrar FPS

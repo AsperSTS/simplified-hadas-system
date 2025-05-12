@@ -1,7 +1,7 @@
 import numpy as np
 # Load class names (assuming COCO)
 
-TARGET_FPS = 100
+TARGET_FPS = 35
 FRAME_INTERVAL = 1.0 / TARGET_FPS
 
 CLASS_NAMES = None

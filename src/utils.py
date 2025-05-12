@@ -151,3 +151,15 @@ def non_max_suppression(boxes, probs=None, overlap_thresh=0.3):
     
     # Devolver solo los índices seleccionados
     return pick
+
+def record_safety_videos(frame, ):
+    """
+        Se graban clips cuando tengas un peaton cercano
+    """
+
+    # for i, box in enumerate(boxes):
+    #     if class_ids[i] == 9:  # ID del semáforo
+    #         pass   
+
+
+    return frame

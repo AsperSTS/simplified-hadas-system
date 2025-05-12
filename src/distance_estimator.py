@@ -24,20 +24,24 @@ class DistanceEstimator:
         # Increased slightly to make distances appear closer
         self.class_heights = {
             0: 1.7,    # person (average height)
+            1: 1.6,    # bicyble
             2: 1.7,    # car (height from ground)
+            3: 1.7,    # motorcycle (when considering rider too)
             5: 3.5,    # bus
             7: 3.4,    # truck
-            8: 1.8,    # motorcycle (when considering rider too)
+            
         }
         
         # Known average widths of different object classes (in meters)
         # Increased slightly to make distances appear closer
         self.class_widths = {
             0: 0.6,    # person (shoulder width)
+            1: 0.7,    # bicyble
             2: 1.9,    # car (width)
+            3: 0.7,    # motorcycle
             5: 2.55,    # bus
             7: 2.55,    # truck
-            8: 0.8,    # motorcycle
+            
         }
         
         # Default distance thresholds (in meters) for different warning levels
@@ -151,7 +155,7 @@ class DistanceEstimator:
             w_width * width_based_distance 
         )
         
-        distance = np.subtract(distance, 13.5)
+        distance = np.subtract(distance, 13.9)
 
         # Apply reasonability constraints
         distance = max(1.5, min(100.0, distance))  # Limit to 1-100 meters range
@@ -219,7 +223,7 @@ def add_distance_estimation(frame, boxes, class_ids, distance_estimator=None):
         class_id = class_ids[i]
         
         # Only estimate distance for vehicles and people
-        if class_id in [0, 2, 5, 7, 8]:  # person, car, bus, truck, bike
+        if class_id in [0, 1, 2, 3, 5, 7]:  # person, bicycle,  car, motorbike, bus, truck, bike
             # Calculate distance
             distance = distance_estimator.estimate_distance(box, class_id, height, width)
             

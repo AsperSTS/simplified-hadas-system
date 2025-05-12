@@ -21,6 +21,7 @@ Este codigo implementa un sistema ADAS (Sistema Avanzados de Asistencia al Condu
 2. **Detección de líneas de carril**
 3. **Detección de obstáculos**
 4. **Detección de vehículos**
+5. **Analisis de semaforos**
 
 
 ## Cómo ejecutar el sistema
@@ -36,6 +37,7 @@ This code implements a HADAS system (Autonomous Driving Assistance Systems) in a
 2. **Lanes detection**
 3. **Obstacles detection**
 4. **Vehicles detection**
+5. **StopLight analysis**
 
 ## Run the proyect
 

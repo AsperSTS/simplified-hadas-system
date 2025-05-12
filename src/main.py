@@ -8,6 +8,7 @@ from lane_detector import detect_lanes
 from yolo_detector import obstacles_detector
 from distance_estimator import add_distance_estimation
 from config import *
+from stop_lights import process_stop_light
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Sistema de detección para conducción autónoma')
@@ -56,6 +57,8 @@ def process_video(input_source, output_path=None, show_video=True):
                 print("Fin del video o error en la captura.")
                 break
 
+            
+            
             frame = detect_lanes(frame)
             
             result_frame, last_detections = obstacles_detector(
@@ -63,6 +66,10 @@ def process_video(input_source, output_path=None, show_video=True):
             )
 
             result_frame = add_distance_estimation(
+                frame, last_detections['boxes'], last_detections['class_ids']
+            )
+
+            result_frame = process_stop_light(
                 frame, last_detections['boxes'], last_detections['class_ids']
             )
 

@@ -25,7 +25,6 @@ def obstacles_detector(model, frame, frame_count, width, height, last_detections
             'class_ids': [],
             'confidences': []
         }
-
     
     # Procesar cada 3 frames
     if frame_count % 2 == 0:

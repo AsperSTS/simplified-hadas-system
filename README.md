@@ -1,48 +1,56 @@
-## **Instalación de dependencias:** 
+# Simplified ADAS with Computer Vision
 
-Asegúrate de tener Python instalado en tu sistema. Luego, puedes instalar las dependencias usando pip:
+Educational prototype of an Advanced Driver Assistance System (ADAS) built with computer-vision techniques.
+
+The project processes road video and combines several detection tasks in one pipeline.
+
+## Features
+
+- Pedestrian detection
+- Lane detection
+- Obstacle detection
+- Vehicle detection
+- Traffic-light analysis
+
+## Pipeline
+
+```text
+video frame
+   ↓
+preprocessing
+   ↓
+lane / vehicle / pedestrian / obstacle analysis
+   ↓
+traffic-light analysis
+   ↓
+overlay and visualization
+```
+
+## Installation
+
+Using pip:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-O, si prefieres usar Conda:
+Or Conda:
 
 ```bash
 conda env create -f environment.yml
 conda activate adas_yolo
 ```
 
-## Descripción del proyecto
+## Run
 
-Este codigo implementa un sistema ADAS (Sistema Avanzados de Asistencia al Conductor) de una forma simplificado enfocado en el uso de tecnicas de vision por computadora, se implementan:
+```bash
+python main.py --input video1_720.mp4 --show
+```
 
-1. **Detección de peatones**
-2. **Detección de líneas de carril**
-3. **Detección de obstáculos**
-4. **Detección de vehículos**
-5. **Analisis de semaforos**
+Replace the input path with another compatible video when needed.
 
+## Scope
 
-## Cómo ejecutar el sistema
+This project is a simplified academic prototype. It is intended to demonstrate how multiple computer-vision components can be combined in a road-scene pipeline.
 
-1. Para utilizar un video guardado:
-   ```bash 
-   python main.py --input video1_720.mp4 --show
-   ```
-
-## Project description
-This code implements a HADAS system (Autonomous Driving Assistance Systems) in a simplified way, focusing in the usage of computer vision techniques, this code implements these features:
-1. **Pedestrian detection**
-2. **Lanes detection**
-3. **Obstacles detection**
-4. **Vehicles detection**
-5. **StopLight analysis**
-
-## Run the proyect
-
-1. To use a existent video:
-   ```bash
-   python main.py --input [VideoName.mp4] --show
-   ```
-
+It is not a production automotive safety system and must not be used for real driving decisions.

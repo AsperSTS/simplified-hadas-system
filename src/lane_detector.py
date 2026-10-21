@@ -115,7 +115,10 @@ class LaneDetector:
 
             if lines is not None:
                 for line in lines:
-                    x1, y1, x2, y2 = line[0]
+                    line_coords = np.array(line).reshape(-1)
+                    if len(line_coords) != 4:
+                        continue
+                    x1, y1, x2, y2 = line_coords
 
                     if x2 - x1 == 0:  # Evita división por cero
                         continue

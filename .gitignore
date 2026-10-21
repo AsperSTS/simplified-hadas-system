@@ -9,4 +9,5 @@ yolov4-tiny.weights
 test.py
 oldcode/
 testcode.py
-sensors-24-02116.pdf
+*.pdf
+.DS_Store
